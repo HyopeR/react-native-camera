@@ -9,7 +9,7 @@ This package has been forked from the react-native-camera package.
 
 **What does it do?**</br>
 **1-** It uses **Google Mlkit** for Android platform.</br>
-**2-** It uses **Firebase Mlkit **for Ios platform.
+**2-** It uses **Firebase Mlkit** for Ios platform.
 
 **Why?**</br>
 After react-native-camera package migrated to Google Mlkit. Barcode scanning / Text scanning and Face detection operations on the Ios platform are not properly executed.
