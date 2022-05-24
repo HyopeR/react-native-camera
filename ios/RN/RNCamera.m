@@ -1160,20 +1160,20 @@ BOOL _sessionInterrupted = NO;
 
             AVCaptureDeviceFormat *selectedFormat = nil;
             int32_t activeWidth = activeDimensions.width;
-            int32_t activeHeight = activeDimensions.height;
+            int32_t maxWidth = 0;
 
             for (AVCaptureDeviceFormat *format in [device formats]) {
                 CMFormatDescriptionRef formatDescription = format.formatDescription;
                 CMVideoDimensions formatDimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
                 int32_t formatWidth = formatDimensions.width;
-                int32_t formatHeight = formatDimensions.height;
-                if (formatWidth != activeWidth || formatHeight != activeHeight) {
+                if (formatWidth != activeWidth || formatWidth < maxWidth) {
                     continue;
                 }
 
                 for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
                     if (range.minFrameRate <= desiredFPS && desiredFPS <= range.maxFrameRate) {
                         selectedFormat = format;
+                        maxWidth = formatWidth;
                     }
                 }
             }

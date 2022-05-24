@@ -165,7 +165,7 @@ RCT_EXPORT_VIEW_PROPERTY(onTouch, RCTDirectEventBlock);
 
 + (NSDictionary *)faceDetectorConstants
 {
-#if __has_include(<MLKitFaceDetection/MLKitFaceDetection.h>)
+#if __has_include(<FirebaseMLVision/FirebaseMLVision.h>)
     return [FaceDetectorManagerMlkit constants];
 #else
     return [NSDictionary new];
@@ -174,7 +174,7 @@ RCT_EXPORT_VIEW_PROPERTY(onTouch, RCTDirectEventBlock);
 
 + (NSDictionary *)barcodeDetectorConstants
 {
-#if __has_include(<MLKitBarcodeScanning/MLKitBarcodeScanning.h>)
+#if __has_include(<FirebaseMLVision/FirebaseMLVision.h>)
     return [BarcodeDetectorManagerMlkit constants];
 #else
     return [NSDictionary new];
@@ -304,6 +304,7 @@ RCT_CUSTOM_VIEW_PROPERTY(faceDetectionClassifications, NSString, RNCamera)
 
 RCT_CUSTOM_VIEW_PROPERTY(barCodeScannerEnabled, BOOL, RNCamera)
 {
+
     view.isReadingBarCodes = [RCTConvert BOOL:json];
     [view setupOrDisableBarcodeScanner];
 }
@@ -331,6 +332,7 @@ RCT_CUSTOM_VIEW_PROPERTY(googleVisionBarcodeDetectorEnabled, BOOL, RNCamera)
 
 RCT_CUSTOM_VIEW_PROPERTY(textRecognizerEnabled, BOOL, RNCamera)
 {
+
     view.canReadText = [RCTConvert BOOL:json];
     [view setupOrDisableTextDetector];
 }

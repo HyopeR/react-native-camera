@@ -1,5 +1,5 @@
 #import "RNFaceDetectorModuleMLKit.h"
-#if __has_include(<MLKitFaceDetection/MLKitFaceDetection.h>)
+#if __has_include(<FirebaseMLVision/FirebaseMLVision.h>)
 #import "RNFileSystem.h"
 #import "RNImageUtils.h"
 
@@ -58,7 +58,7 @@ RCT_EXPORT_METHOD(detectFaces:(nonnull NSDictionary *)options
             reject(@"E_FACE_DETECTION_FAILED", [NSString stringWithFormat:@"The file does not exist. Given path: `%@`.", path], nil);
             return;
         }
-        MLKFaceDetectorOptions *newOptions = [[MLKFaceDetectorOptions alloc] init];
+        FIRVisionFaceDetectorOptions *newOptions = [[FIRVisionFaceDetectorOptions alloc] init];
         if (options[kDetectLandmarksOptionName]) {
             newOptions.landmarkMode = [options[kDetectLandmarksOptionName] integerValue];
         }
