@@ -76,7 +76,7 @@ public class FaceDetectorAsyncTask extends android.os.AsyncTask<Void, Void, Void
     if (isCancelled() || mDelegate == null || mFaceDetector == null) {
       return null;
     }
-    InputImage image = InputImage.fromByteArray(mImageData, mWidth, mHeight, getFirebaseRotation(), InputImage.IMAGE_FORMAT_YV12);
+    InputImage image = InputImage.fromByteArray(mImageData, mCropWidth, mCropHeight, getFirebaseRotation(), InputImage.IMAGE_FORMAT_YV12);
 
     FaceDetector detector = mFaceDetector.getDetector();
     detector.process(image)
