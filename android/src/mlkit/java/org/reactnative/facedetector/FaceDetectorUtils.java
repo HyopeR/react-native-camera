@@ -16,10 +16,10 @@ public class FaceDetectorUtils {
   };
 
   public static WritableMap serializeFace(Face face) {
-    return serializeFace(face, 1, 1, 0, 0, 0, 0);
+    return serializeFace(face, 1, 1, 0, 0, 0, 0, 0, 0);
   }
 
-  public static WritableMap serializeFace(Face face, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop) {
+  public static WritableMap serializeFace(Face face, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop, int cropX, int cropY) {
     WritableMap encodedFace = Arguments.createMap();
 
     int id = 0;
@@ -58,13 +58,13 @@ public class FaceDetectorUtils {
     for (int i = 0; i < landmarks.length; ++i) {
       FaceLandmark landmark = face.getLandmark(landmarks[i]);
       if (landmark != null) {
-        encodedFace.putMap(landmarkNames[i], mapFromPoint(landmark.getPosition(), scaleX, scaleY, width, height, paddingLeft, paddingTop));
+        encodedFace.putMap(landmarkNames[i], mapFromPoint(landmark.getPosition(), scaleX, scaleY, width, height, paddingLeft, paddingTop, cropX, cropY));
       }
     }
 
     WritableMap origin = Arguments.createMap();
-    Float x = face.getBoundingBox().exactCenterX() - (face.getBoundingBox().width() / 2 );
-    Float y = face.getBoundingBox().exactCenterY() - (face.getBoundingBox().height() / 2);
+    Float x = face.getBoundingBox().exactCenterX() - (face.getBoundingBox().width() / 2 ) + cropX;
+    Float y = face.getBoundingBox().exactCenterY() - (face.getBoundingBox().height() / 2) + cropY;
     if (face.getBoundingBox().exactCenterX() < width / 2) {
       x = x + paddingLeft / 2;
     } else if (face.getBoundingBox().exactCenterX() > width / 2) {
@@ -125,10 +125,10 @@ public class FaceDetectorUtils {
     return face;
   }
 
-  public static WritableMap mapFromPoint(PointF point, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop) {
+  public static WritableMap mapFromPoint(PointF point, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop, int cropX, int cropY) {
     WritableMap map = Arguments.createMap();
-    Float x = point.x;
-    Float y = point.y;
+    Float x = point.x + cropX;
+    Float y = point.y + cropY;
     if (point.x < width / 2) {
       x = (x + paddingLeft / 2);
     } else if (point.x > width / 2) {
