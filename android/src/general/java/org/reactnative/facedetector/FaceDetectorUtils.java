@@ -1,6 +1,7 @@
 package org.reactnative.facedetector;
 
 import android.graphics.PointF;
+import android.graphics.Rect;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
@@ -9,80 +10,60 @@ import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceLandmark;
 
 public class FaceDetectorUtils {
+  // All the landmarks reported by Google Mobile Vision in constants' order.
+  // https://developers.google.com/android/reference/com/google/android/gms/vision/face/Landmark
   private static final String[] landmarkNames = {
-          "bottomMouthPosition", "leftCheekPosition", "leftEarPosition",
-          "leftEyePosition", "leftMouthPosition", "noseBasePosition", "rightCheekPosition",
-          "rightEarPosition", "rightEyePosition", "rightMouthPosition"
+    "bottomMouthPosition", "leftCheekPosition", "leftEarPosition", "leftEarTipPosition",
+      "leftEyePosition", "leftMouthPosition", "noseBasePosition", "rightCheekPosition",
+      "rightEarPosition", "rightEarTipPosition", "rightEyePosition", "rightMouthPosition"
   };
 
   public static WritableMap serializeFace(Face face) {
-    return serializeFace(face, 1, 1, 0, 0, 0, 0);
+    return serializeFace(face, 1, 1, 0, 0, 0, 0, 0, 0);
   }
 
-  public static WritableMap serializeFace(Face face, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop) {
+  public static WritableMap serializeFace(Face face, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop, int cropX, int cropY) {
     WritableMap encodedFace = Arguments.createMap();
 
-    int id = 0;
-    // If face tracking was enabled:
-    if (face.getTrackingId() != null) {
-      id = face.getTrackingId();
-    }
-
-
-    encodedFace.putInt("faceID", id);
+    encodedFace.putInt("faceID", face.getTrackingId());
     encodedFace.putDouble("rollAngle", face.getHeadEulerAngleZ());
     encodedFace.putDouble("yawAngle", face.getHeadEulerAngleY());
 
-    // If classification was enabled:
-    if (face.getSmilingProbability() != null) {
+    if (face.getSmilingProbability() >= 0) {
       encodedFace.putDouble("smilingProbability", face.getSmilingProbability());
     }
-    if (face.getLeftEyeOpenProbability() != null) {
+    if (face.getLeftEyeOpenProbability() >= 0) {
       encodedFace.putDouble("leftEyeOpenProbability", face.getLeftEyeOpenProbability());
     }
-    if (face.getRightEyeOpenProbability() != null) {
+    if (face.getRightEyeOpenProbability() >= 0) {
       encodedFace.putDouble("rightEyeOpenProbability", face.getRightEyeOpenProbability());
     }
-    int[] landmarks = {
-            FaceLandmark.MOUTH_BOTTOM,
-            FaceLandmark.LEFT_CHEEK,
-            FaceLandmark.LEFT_EAR,
-            FaceLandmark.LEFT_EYE,
-            FaceLandmark.MOUTH_LEFT,
-            FaceLandmark.NOSE_BASE,
-            FaceLandmark.RIGHT_CHEEK,
-            FaceLandmark.RIGHT_EAR,
-            FaceLandmark.RIGHT_EYE,
-            FaceLandmark.MOUTH_RIGHT};
 
-    for (int i = 0; i < landmarks.length; ++i) {
-      FaceLandmark landmark = face.getLandmark(landmarks[i]);
-      if (landmark != null) {
-        encodedFace.putMap(landmarkNames[i], mapFromPoint(landmark.getPosition(), scaleX, scaleY, width, height, paddingLeft, paddingTop));
-      }
+    for(FaceLandmark landmark : face.getAllLandmarks()) {
+      encodedFace.putMap(landmarkNames[landmark.getLandmarkType()], mapFromPoint(landmark.getPosition(), scaleX, scaleY, width, height, paddingLeft, paddingTop, cropX, cropY));
     }
 
     WritableMap origin = Arguments.createMap();
-    Float x = face.getBoundingBox().exactCenterX() - (face.getBoundingBox().width() / 2 );
-    Float y = face.getBoundingBox().exactCenterY() - (face.getBoundingBox().height() / 2);
-    if (face.getBoundingBox().exactCenterX() < width / 2) {
+    Rect boundingBox = face.getBoundingBox();
+    int x = boundingBox.left + cropX;
+    int y = boundingBox.top + cropY;
+    if (x < width / 2) {
       x = x + paddingLeft / 2;
-    } else if (face.getBoundingBox().exactCenterX() > width / 2) {
+    } else if (x > width / 2) {
       x = x - paddingLeft / 2;
     }
 
-    if (face.getBoundingBox().exactCenterY() < height / 2) {
+    if (y < height / 2) {
       y = y + paddingTop / 2;
-    } else if (face.getBoundingBox().exactCenterY() > height / 2) {
+    } else if (y > height / 2) {
       y = y - paddingTop / 2;
     }
-
     origin.putDouble("x", x * scaleX);
     origin.putDouble("y", y * scaleY);
 
     WritableMap size = Arguments.createMap();
-    size.putDouble("width", face.getBoundingBox().width() * scaleX);
-    size.putDouble("height", face.getBoundingBox().height() * scaleY);
+    size.putDouble("width", boundingBox.width() * scaleX);
+    size.putDouble("height", boundingBox.height() * scaleY);
 
     WritableMap bounds = Arguments.createMap();
     bounds.putMap("origin", origin);
@@ -125,10 +106,10 @@ public class FaceDetectorUtils {
     return face;
   }
 
-  public static WritableMap mapFromPoint(PointF point, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop) {
+  public static WritableMap mapFromPoint(PointF point, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop, int cropX, int cropY) {
     WritableMap map = Arguments.createMap();
-    Float x = point.x;
-    Float y = point.y;
+    Float x = point.x + cropX;
+    Float y = point.y + cropY;
     if (point.x < width / 2) {
       x = (x + paddingLeft / 2);
     } else if (point.x > width / 2) {
@@ -140,8 +121,8 @@ public class FaceDetectorUtils {
     } else if (point.y > height / 2) {
       y = (y - paddingTop / 2);
     }
-    map.putDouble("x", x * scaleX);
-    map.putDouble("y", y * scaleY);
+    map.putDouble("x", point.x * scaleX);
+    map.putDouble("y", point.y * scaleY);
     return map;
   }
 
