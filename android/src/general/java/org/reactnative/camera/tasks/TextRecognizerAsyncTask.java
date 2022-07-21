@@ -33,6 +33,10 @@ public class TextRecognizerAsyncTask extends android.os.AsyncTask<Void, Void, Li
   private byte[] mImageData;
   private int mWidth;
   private int mHeight;
+  private int mCropWidth;
+  private int mCropHeight;
+  private int mCropX;
+  private int mCropY;
   private int mRotation;
   private ImageDimensions mImageDimensions;
   private double mScaleX;
@@ -52,13 +56,21 @@ public class TextRecognizerAsyncTask extends android.os.AsyncTask<Void, Void, Li
           int viewWidth,
           int viewHeight,
           int viewPaddingLeft,
-          int viewPaddingTop
+          int viewPaddingTop,
+          int cropWidth,
+          int cropHeight,
+          int cropX,
+          int cropY
   ) {
     mDelegate = delegate;
     mThemedReactContext = themedReactContext;
     mImageData = imageData;
     mWidth = width;
     mHeight = height;
+    mCropWidth = cropWidth;
+    mCropHeight = cropHeight;
+    mCropX = cropX;
+    mCropY = cropY;
     mRotation = rotation;
     mImageDimensions = new ImageDimensions(width, height, rotation, facing);
     mScaleX = (double) (viewWidth) / (mImageDimensions.getWidth() * density);
@@ -73,7 +85,7 @@ public class TextRecognizerAsyncTask extends android.os.AsyncTask<Void, Void, Li
       return null;
     }
     mTextRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
-    RNFrame frame = RNFrameFactory.buildFrame(mImageData, mWidth, mHeight, mRotation);
+    RNFrame frame = RNFrameFactory.buildFrame(mImageData, mCropWidth, mCropHeight, mRotation);
     return mTextRecognizer.process(frame.getFrame()).getResult().getTextBlocks();
   }
 
@@ -153,8 +165,16 @@ public class TextRecognizerAsyncTask extends android.os.AsyncTask<Void, Void, Li
   }
 
   private WritableMap serializeBounds(Rect boundingBox) {
-    int x = boundingBox.left;
-    int y = boundingBox.top;
+    int cropX = mCropX;
+    int cropY = mCropY;
+    // Crop x/y are relative to landscape mode, we have to invert them for portrait mode
+    if(mRotation == 90 || mRotation == -90) {
+      cropX = mCropY;
+      cropY = mCropX;
+    }
+
+    int x = boundingBox.left + cropX;
+    int y = boundingBox.top + cropY;
     int width = boundingBox.width();
     int height = boundingBox.height();
     if (x < mWidth / 2) {
