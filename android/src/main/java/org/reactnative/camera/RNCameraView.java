@@ -1,5 +1,7 @@
 package org.reactnative.camera;
 
+import android.util.Log;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
@@ -25,6 +27,7 @@ import com.google.android.cameraview.CameraView;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
+import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
 import org.reactnative.barcodedetector.RNBarcodeDetector;
 import org.reactnative.camera.tasks.*;
@@ -74,6 +77,11 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
   private boolean mShouldScanBarCodes = false;
   private boolean mShouldRecognizeText = false;
   private boolean mShouldDetectTouches = false;
+
+  private boolean mShouldCropScanArea = false;
+  private double mCropScanAreaPercentageWidth = 0;
+  private double mCropScanAreaPercentageHeight = 0;
+
   private int mFaceDetectorMode = RNFaceDetector.FAST_MODE;
   private int mFaceDetectionLandmarks = RNFaceDetector.NO_LANDMARKS;
   private int mFaceDetectionClassifications = RNFaceDetector.NO_CLASSIFICATIONS;
@@ -174,16 +182,47 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
             return;
         }
 
+        int cropWidth = width;
+        int cropHeight = height;
+        int cropX = 0;
+        int cropY = 0;
+        if(mShouldCropScanArea) {
+          // The image bytes array is always in landscape mode (rotation 0)
+          // We crop based on the portrait mode, so here the percentages are inverted (width/height)
+          cropWidth = (int)(width * mCropScanAreaPercentageHeight);
+          cropHeight = (int)(height * mCropScanAreaPercentageWidth);
+          cropX = (width/2)-(cropWidth/2);
+          cropY = (height/2)-(cropHeight/2);
+
+          data = (new PlanarYUVLuminanceSource(
+                  data, // byte[] yuvData
+                  width, // int dataWidth
+                  height, // int dataHeight
+                  cropX, // int left
+                  cropY, // int top
+                  cropWidth, // int width
+                  cropHeight, // int height
+                  false // boolean reverseHorizontal
+          )).getMatrix();
+
+          Log.d("batiplusTest", "should crop scan area : "+cropX+"/"+cropY +" "+ cropWidth +"/"+cropHeight);
+        } else {
+          Log.d("batiplusTest", "should not crop scan area");
+        }
+
+        Log.d("batiplusTest", "willCallBarCodeTask "+ willCallBarCodeTask);
+        Log.d("batiplusTest", "willCallGoogleBarcodeTask "+ willCallGoogleBarcodeTask);
+
         if (willCallBarCodeTask) {
           barCodeScannerTaskLock = true;
           BarCodeScannerAsyncTaskDelegate delegate = (BarCodeScannerAsyncTaskDelegate) cameraView;
-          new BarCodeScannerAsyncTask(delegate, mMultiFormatReader, data, width, height, mLimitScanArea, mScanAreaX, mScanAreaY, mScanAreaWidth, mScanAreaHeight, mCameraViewWidth, mCameraViewHeight, getAspectRatio().toFloat()).execute();
+          new BarCodeScannerAsyncTask(delegate, mMultiFormatReader, data, cropWidth, cropHeight, mLimitScanArea, mScanAreaX, mScanAreaY, mScanAreaWidth, mScanAreaHeight, mCameraViewWidth, mCameraViewHeight, getAspectRatio().toFloat()).execute();
         }
 
         if (willCallFaceTask) {
           faceDetectorTaskLock = true;
           FaceDetectorAsyncTaskDelegate delegate = (FaceDetectorAsyncTaskDelegate) cameraView;
-          new FaceDetectorAsyncTask(delegate, mFaceDetector, data, width, height, correctRotation, getResources().getDisplayMetrics().density, getFacing(), getWidth(), getHeight(), mPaddingX, mPaddingY).execute();
+          new FaceDetectorAsyncTask(delegate, mFaceDetector, data, width, height, correctRotation, getResources().getDisplayMetrics().density, getFacing(), getWidth(), getHeight(), mPaddingX, mPaddingY, cropWidth, cropHeight, cropX, cropY).execute();
         }
 
         if (willCallGoogleBarcodeTask) {
@@ -203,13 +242,13 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
           BarcodeDetectorAsyncTaskDelegate delegate = (BarcodeDetectorAsyncTaskDelegate) cameraView;
           new BarcodeDetectorAsyncTask(delegate, mGoogleBarcodeDetector, data, width, height,
                   correctRotation, getResources().getDisplayMetrics().density, getFacing(),
-                  getWidth(), getHeight(), mPaddingX, mPaddingY).execute();
+                  getWidth(), getHeight(), mPaddingX, mPaddingY, cropWidth, cropHeight, cropX, cropY).execute();
         }
 
         if (willCallTextTask) {
           textRecognizerTaskLock = true;
           TextRecognizerAsyncTaskDelegate delegate = (TextRecognizerAsyncTaskDelegate) cameraView;
-          new TextRecognizerAsyncTask(delegate, mThemedReactContext, data, width, height, correctRotation, getResources().getDisplayMetrics().density, getFacing(), getWidth(), getHeight(), mPaddingX, mPaddingY).execute();
+          new TextRecognizerAsyncTask(delegate, mThemedReactContext, data, width, height, correctRotation, getResources().getDisplayMetrics().density, getFacing(), getWidth(), getHeight(), mPaddingX, mPaddingY, cropWidth, cropHeight, cropX, cropY).execute();
         }
       }
     });
@@ -363,6 +402,18 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
     }
     this.mShouldScanBarCodes = shouldScanBarCodes;
     setScanning(mShouldDetectFaces || mShouldGoogleDetectBarcodes || mShouldScanBarCodes || mShouldRecognizeText);
+  }
+
+  public void setShouldCropScanArea(boolean shouldCropScanArea) {
+    this.mShouldCropScanArea = shouldCropScanArea;
+  }
+
+  public void setCropScanAreaPercentageWidth(double cropScanAreaPercentageWidth) {
+    this.mCropScanAreaPercentageWidth = cropScanAreaPercentageWidth;
+  }
+
+  public void setCropScanAreaPercentageHeight(double cropScanAreaPercentageHeight) {
+    this.mCropScanAreaPercentageHeight = cropScanAreaPercentageHeight;
   }
 
   public void onBarCodeRead(Result barCode, int width, int height, byte[] imageData) {
