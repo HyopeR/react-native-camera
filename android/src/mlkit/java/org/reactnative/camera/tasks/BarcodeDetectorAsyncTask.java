@@ -79,7 +79,7 @@ public class BarcodeDetectorAsyncTask extends android.os.AsyncTask<Void, Void, V
       return null;
     }
 
-    InputImage image = InputImage.fromByteArray(mImageData, mWidth, mHeight, getFirebaseRotation(), InputImage.IMAGE_FORMAT_YV12);
+    InputImage image = InputImage.fromByteArray(mImageData, mCropWidth, mCropHeight, getFirebaseRotation(), InputImage.IMAGE_FORMAT_YV12);
 
     BarcodeScanner barcode = mBarcodeDetector.getDetector();
     barcode.process(image)
