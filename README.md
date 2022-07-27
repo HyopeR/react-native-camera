@@ -1,4 +1,4 @@
-# REACT NATIVE PLANET CAMERA 🪐
+# REACT NATIVE CAMERA 🪐
 
 This package has been forked from the react-native-camera package.
 
