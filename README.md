@@ -18,3 +18,12 @@ After react-native-camera package migrated to Google Mlkit. Barcode scanning / T
 A firebase package included in your project should have a maximum version of 8.4.7. After the 9.0.0 migration, conflicts occur on the IOS side.
 
 `@react-native-firebase/app: 8.4.7`
+
+**NEW FEATURES:**</br>
+Limit the scanning area. This speeds up scans.</br>
+The center of the screen will be cut off vertically and horizontally.</br>
+The UI side is left to the developers.</br>
+
+```
+<RNCamera cropScanArea={[0.9, 0.25]} />
+```
