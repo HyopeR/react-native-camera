@@ -45,8 +45,8 @@ public class FaceDetectorUtils {
 
     WritableMap origin = Arguments.createMap();
     Rect boundingBox = face.getBoundingBox();
-    int x = boundingBox.left;
-    int y = boundingBox.top;
+    int x = boundingBox.left + cropX;
+    int y = boundingBox.top + cropY;
     if (x < width / 2) {
       x = x + paddingLeft / 2;
     } else if (x > width / 2) {
