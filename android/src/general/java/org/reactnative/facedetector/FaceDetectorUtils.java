@@ -19,10 +19,10 @@ public class FaceDetectorUtils {
   };
 
   public static WritableMap serializeFace(Face face) {
-    return serializeFace(face, 1, 1, 0, 0, 0, 0);
+    return serializeFace(face, 1, 1, 0, 0, 0, 0, 0, 0);
   }
 
-  public static WritableMap serializeFace(Face face, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop) {
+  public static WritableMap serializeFace(Face face, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop, int cropX, int cropY) {
     WritableMap encodedFace = Arguments.createMap();
 
     encodedFace.putInt("faceID", face.getTrackingId());
@@ -40,7 +40,7 @@ public class FaceDetectorUtils {
     }
 
     for(FaceLandmark landmark : face.getAllLandmarks()) {
-      encodedFace.putMap(landmarkNames[landmark.getLandmarkType()], mapFromPoint(landmark.getPosition(), scaleX, scaleY, width, height, paddingLeft, paddingTop));
+      encodedFace.putMap(landmarkNames[landmark.getLandmarkType()], mapFromPoint(landmark.getPosition(), scaleX, scaleY, width, height, paddingLeft, paddingTop, cropX, cropY));
     }
 
     WritableMap origin = Arguments.createMap();
@@ -106,10 +106,10 @@ public class FaceDetectorUtils {
     return face;
   }
 
-  public static WritableMap mapFromPoint(PointF point, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop) {
+  public static WritableMap mapFromPoint(PointF point, double scaleX, double scaleY, int width, int height, int paddingLeft, int paddingTop, int cropX, int cropY) {
     WritableMap map = Arguments.createMap();
-    Float x = point.x;
-    Float y = point.y;
+    Float x = point.x + cropX;
+    Float y = point.y + cropY;
     if (point.x < width / 2) {
       x = (x + paddingLeft / 2);
     } else if (point.x > width / 2) {
