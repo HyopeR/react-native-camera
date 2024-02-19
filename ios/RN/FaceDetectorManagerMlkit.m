@@ -12,20 +12,20 @@
 
 @implementation FaceDetectorManagerMlkit
 
-- (instancetype)init 
+- (instancetype)init
 {
   if (self = [super init]) {
     self.options = [[MLKFaceDetectorOptions alloc] init];
     self.options.performanceMode = MLKFaceDetectorPerformanceModeFast;
     self.options.landmarkMode = MLKFaceDetectorLandmarkModeNone;
     self.options.classificationMode = MLKFaceDetectorClassificationModeNone;
-    
+
     self.faceRecognizer = [MLKFaceDetector faceDetectorWithOptions:_options];
   }
   return self;
 }
 
-- (BOOL)isRealDetector 
+- (BOOL)isRealDetector
 {
   return true;
 }
@@ -48,7 +48,7 @@
              };
 }
 
-- (void)setTracking:(id)json queue:(dispatch_queue_t)sessionQueue 
+- (void)setTracking:(id)json queue:(dispatch_queue_t)sessionQueue
 {
   BOOL requestedValue = [RCTConvert BOOL:json];
   if (requestedValue != self.options.trackingEnabled) {
@@ -62,7 +62,7 @@
   }
 }
 
-- (void)setLandmarksMode:(id)json queue:(dispatch_queue_t)sessionQueue 
+- (void)setLandmarksMode:(id)json queue:(dispatch_queue_t)sessionQueue
 {
     long requestedValue = [RCTConvert NSInteger:json];
     if (requestedValue != self.options.landmarkMode) {
@@ -76,7 +76,7 @@
     }
 }
 
-- (void)setPerformanceMode:(id)json queue:(dispatch_queue_t)sessionQueue 
+- (void)setPerformanceMode:(id)json queue:(dispatch_queue_t)sessionQueue
 {
     long requestedValue = [RCTConvert NSInteger:json];
     if (requestedValue != self.options.performanceMode) {
@@ -90,7 +90,7 @@
     }
 }
 
-- (void)setClassificationMode:(id)json queue:(dispatch_queue_t)sessionQueue 
+- (void)setClassificationMode:(id)json queue:(dispatch_queue_t)sessionQueue
 {
     long requestedValue = [RCTConvert NSInteger:json];
     if (requestedValue != self.options.classificationMode) {
@@ -107,7 +107,7 @@
 - (void)findFacesInFrame:(UIImage *)uiImage
                   scaleX:(float)scaleX
                   scaleY:(float)scaleY
-               completed:(void (^)(NSArray *result))completed 
+               completed:(void (^)(NSArray *result))completed
 {
     self.scaleX = scaleX;
     self.scaleY = scaleY;
@@ -124,7 +124,7 @@
      }];
 }
 
-- (NSArray *)processFaces:(NSArray *)faces 
+- (NSArray *)processFaces:(NSArray *)faces
 {
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for (MLKFace *face in faces) {
@@ -148,7 +148,7 @@
             CGFloat rotZ = -1 * face.headEulerAngleZ;
             [resultDict setObject:@(rotZ) forKey:@"rollAngle"];
         }
-        
+
         // If landmark detection was enabled (mouth, ears, eyes, cheeks, and
         // nose available):
         /** Midpoint of the left ear tip and left ear lobe. */
@@ -221,7 +221,7 @@
             [resultDict setObject:[self processPoint:noseBase.position]
                            forKey:@"noseBasePosition"];
         }
-        
+
         // If classification was enabled:
         if (face.hasSmilingProbability) {
             CGFloat smileProb = face.smilingProbability;
@@ -242,7 +242,7 @@
     return result;
 }
 
-- (NSDictionary *)processBounds:(CGRect)bounds 
+- (NSDictionary *)processBounds:(CGRect)bounds
 {
     float width = bounds.size.width * _scaleX;
     float height = bounds.size.height * _scaleY;
@@ -257,10 +257,10 @@
 
 - (NSDictionary *)processPoint:(MLKVisionPoint *)point
 {
-    float originX = [point.x floatValue] * _scaleX;
-    float originY = [point.y floatValue] * _scaleY;
+    float originX = point.x * _scaleX;
+    float originY = point.y * _scaleY;
     NSDictionary *pointDict = @{
-                                
+
                                 @"x" : @(originX),
                                 @"y" : @(originY)
                                 };
@@ -294,21 +294,21 @@
     return features;
 }
 
-- (void)setTracking:(id)json:(dispatch_queue_t)sessionQueue 
+- (void)setTracking:(id)json:(dispatch_queue_t)sessionQueue
 {
     return;
 }
-- (void)setLandmarksMode:(id)json:(dispatch_queue_t)sessionQueue 
-{
-    return;
-}
-
-- (void)setPerformanceMode:(id)json:(dispatch_queue_t)sessionQueue 
+- (void)setLandmarksMode:(id)json:(dispatch_queue_t)sessionQueue
 {
     return;
 }
 
-- (void)setClassificationMode:(id)json:(dispatch_queue_t)sessionQueue 
+- (void)setPerformanceMode:(id)json:(dispatch_queue_t)sessionQueue
+{
+    return;
+}
+
+- (void)setClassificationMode:(id)json:(dispatch_queue_t)sessionQueue
 {
     return;
 }

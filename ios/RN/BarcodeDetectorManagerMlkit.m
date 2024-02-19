@@ -170,7 +170,7 @@
                                              @"middleName" : name.middle ? name.middle : @"",
                                              @"lastName" : name.last ? name.last : @"",
                                              @"prefix" : name.prefix ? name.prefix : @"",
-                                             @"pronounciation" : name.pronounciation ? name.pronounciation : @"",
+                                             @"pronounciation" : name.pronunciation ? name.pronunciation : @"",
                                              @"suffix" : name.suffix ? name.suffix : @"",
                                              };
                     [resultDict setObject:nameObject forKey:@"name"];
@@ -389,8 +389,8 @@
 
 - (NSDictionary *)processPoint:(MLKVisionPoint *)point
 {
-    float originX = [point.x floatValue] * _scaleX;
-    float originY = [point.y floatValue] * _scaleY;
+    float originX = point.x * _scaleX;
+    float originY = point.y * _scaleY;
     NSDictionary *pointDict = @{
                                 @"x" : @(originX),
                                 @"y" : @(originY)
