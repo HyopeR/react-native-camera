@@ -1,32 +1,31 @@
 #import "FaceDetectorManagerMlkit.h"
 #import <React/RCTConvert.h>
-#if __has_include(<FirebaseMLVision/FirebaseMLVision.h>)
+#if __has_include(<MLKitFaceDetection/MLKitFaceDetection.h>)
+@import MLKitVision;
 
 @interface FaceDetectorManagerMlkit ()
-@property(nonatomic, strong) FIRVisionFaceDetector *faceRecognizer;
-@property(nonatomic, strong) FIRVision *vision;
-@property(nonatomic, strong) FIRVisionFaceDetectorOptions *options;
+@property(nonatomic, strong) MLKFaceDetector *faceRecognizer;
+@property(nonatomic, strong) MLKFaceDetectorOptions *options;
 @property(nonatomic, assign) float scaleX;
 @property(nonatomic, assign) float scaleY;
 @end
 
 @implementation FaceDetectorManagerMlkit
 
-- (instancetype)init 
+- (instancetype)init
 {
   if (self = [super init]) {
-    self.options = [[FIRVisionFaceDetectorOptions alloc] init];
-    self.options.performanceMode = FIRVisionFaceDetectorPerformanceModeFast;
-    self.options.landmarkMode = FIRVisionFaceDetectorLandmarkModeNone;
-    self.options.classificationMode = FIRVisionFaceDetectorClassificationModeNone;
-    
-    self.vision = [FIRVision vision];
-    self.faceRecognizer = [_vision faceDetectorWithOptions:_options];
+    self.options = [[MLKFaceDetectorOptions alloc] init];
+    self.options.performanceMode = MLKFaceDetectorPerformanceModeFast;
+    self.options.landmarkMode = MLKFaceDetectorLandmarkModeNone;
+    self.options.classificationMode = MLKFaceDetectorClassificationModeNone;
+
+    self.faceRecognizer = [MLKFaceDetector faceDetectorWithOptions:_options];
   }
   return self;
 }
 
-- (BOOL)isRealDetector 
+- (BOOL)isRealDetector
 {
   return true;
 }
@@ -49,7 +48,7 @@
              };
 }
 
-- (void)setTracking:(id)json queue:(dispatch_queue_t)sessionQueue 
+- (void)setTracking:(id)json queue:(dispatch_queue_t)sessionQueue
 {
   BOOL requestedValue = [RCTConvert BOOL:json];
   if (requestedValue != self.options.trackingEnabled) {
@@ -57,13 +56,13 @@
           dispatch_async(sessionQueue, ^{
               self.options.trackingEnabled = requestedValue;
               self.faceRecognizer =
-              [self.vision faceDetectorWithOptions:self.options];
+              [MLKFaceDetector faceDetectorWithOptions:self.options];
           });
       }
   }
 }
 
-- (void)setLandmarksMode:(id)json queue:(dispatch_queue_t)sessionQueue 
+- (void)setLandmarksMode:(id)json queue:(dispatch_queue_t)sessionQueue
 {
     long requestedValue = [RCTConvert NSInteger:json];
     if (requestedValue != self.options.landmarkMode) {
@@ -71,13 +70,13 @@
             dispatch_async(sessionQueue, ^{
                 self.options.landmarkMode = requestedValue;
                 self.faceRecognizer =
-                [self.vision faceDetectorWithOptions:self.options];
+                [MLKFaceDetector faceDetectorWithOptions:self.options];
             });
         }
     }
 }
 
-- (void)setPerformanceMode:(id)json queue:(dispatch_queue_t)sessionQueue 
+- (void)setPerformanceMode:(id)json queue:(dispatch_queue_t)sessionQueue
 {
     long requestedValue = [RCTConvert NSInteger:json];
     if (requestedValue != self.options.performanceMode) {
@@ -85,13 +84,13 @@
             dispatch_async(sessionQueue, ^{
                 self.options.performanceMode = requestedValue;
                 self.faceRecognizer =
-                [self.vision faceDetectorWithOptions:self.options];
+                [MLKFaceDetector faceDetectorWithOptions:self.options];
             });
         }
     }
 }
 
-- (void)setClassificationMode:(id)json queue:(dispatch_queue_t)sessionQueue 
+- (void)setClassificationMode:(id)json queue:(dispatch_queue_t)sessionQueue
 {
     long requestedValue = [RCTConvert NSInteger:json];
     if (requestedValue != self.options.classificationMode) {
@@ -99,7 +98,7 @@
             dispatch_async(sessionQueue, ^{
                 self.options.classificationMode = requestedValue;
                 self.faceRecognizer =
-                [self.vision faceDetectorWithOptions:self.options];
+                [MLKFaceDetector faceDetectorWithOptions:self.options];
             });
         }
     }
@@ -108,15 +107,15 @@
 - (void)findFacesInFrame:(UIImage *)uiImage
                   scaleX:(float)scaleX
                   scaleY:(float)scaleY
-               completed:(void (^)(NSArray *result))completed 
+               completed:(void (^)(NSArray *result))completed
 {
     self.scaleX = scaleX;
     self.scaleY = scaleY;
-    FIRVisionImage *image = [[FIRVisionImage alloc] initWithImage:uiImage];
+    MLKVisionImage *visionImage = [[MLKVisionImage alloc] initWithImage:uiImage];
     NSMutableArray *emptyResult = [[NSMutableArray alloc] init];
     [_faceRecognizer
-     processImage:image
-     completion:^(NSArray<FIRVisionFace *> *faces, NSError *error) {
+     processImage:visionImage
+     completion:^(NSArray<MLKFace *> *faces, NSError *error) {
          if (error != nil || faces == nil) {
              completed(emptyResult);
          } else {
@@ -125,10 +124,10 @@
      }];
 }
 
-- (NSArray *)processFaces:(NSArray *)faces 
+- (NSArray *)processFaces:(NSArray *)faces
 {
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    for (FIRVisionFace *face in faces) {
+    for (MLKFace *face in faces) {
         NSMutableDictionary *resultDict =
         [[NSMutableDictionary alloc] initWithCapacity:20];
         // Boundaries of face in image
@@ -149,80 +148,80 @@
             CGFloat rotZ = -1 * face.headEulerAngleZ;
             [resultDict setObject:@(rotZ) forKey:@"rollAngle"];
         }
-        
+
         // If landmark detection was enabled (mouth, ears, eyes, cheeks, and
         // nose available):
         /** Midpoint of the left ear tip and left ear lobe. */
-        FIRVisionFaceLandmark *leftEar =
-        [face landmarkOfType:FIRFaceLandmarkTypeLeftEar];
+        MLKFaceLandmark *leftEar =
+        [face landmarkOfType:MLKFaceLandmarkTypeLeftEar];
         if (leftEar != nil) {
             [resultDict setObject:[self processPoint:leftEar.position]
                            forKey:@"leftEarPosition"];
         }
         /** Midpoint of the right ear tip and right ear lobe. */
-        FIRVisionFaceLandmark *rightEar =
-        [face landmarkOfType:FIRFaceLandmarkTypeRightEar];
+        MLKFaceLandmark *rightEar =
+        [face landmarkOfType:MLKFaceLandmarkTypeRightEar];
         if (rightEar != nil) {
             [resultDict setObject:[self processPoint:rightEar.position]
                            forKey:@"rightEarPosition"];
         }
         /** Center of the bottom lip. */
-        FIRVisionFaceLandmark *mouthBottom =
-        [face landmarkOfType:FIRFaceLandmarkTypeMouthBottom];
+        MLKFaceLandmark *mouthBottom =
+        [face landmarkOfType:MLKFaceLandmarkTypeMouthBottom];
         if (mouthBottom != nil) {
             [resultDict setObject:[self processPoint:mouthBottom.position]
                            forKey:@"bottomMouthPosition"];
         }
         /** Right corner of the mouth */
-        FIRVisionFaceLandmark *mouthRight =
-        [face landmarkOfType:FIRFaceLandmarkTypeMouthRight];
+        MLKFaceLandmark *mouthRight =
+        [face landmarkOfType:MLKFaceLandmarkTypeMouthRight];
         if (mouthRight != nil) {
             [resultDict setObject:[self processPoint:mouthRight.position]
                            forKey:@"rightMouthPosition"];
         }
         /** Left corner of the mouth */
-        FIRVisionFaceLandmark *mouthLeft =
-        [face landmarkOfType:FIRFaceLandmarkTypeMouthLeft];
+        MLKFaceLandmark *mouthLeft =
+        [face landmarkOfType:MLKFaceLandmarkTypeMouthLeft];
         if (mouthLeft != nil) {
             [resultDict setObject:[self processPoint:mouthLeft.position]
                            forKey:@"leftMouthPosition"];
         }
         /** Left eye. */
-        FIRVisionFaceLandmark *eyeLeft =
-        [face landmarkOfType:FIRFaceLandmarkTypeLeftEye];
+        MLKFaceLandmark *eyeLeft =
+        [face landmarkOfType:MLKFaceLandmarkTypeLeftEye];
         if (eyeLeft != nil) {
             [resultDict setObject:[self processPoint:eyeLeft.position]
                            forKey:@"leftEyePosition"];
         }
         /** Right eye. */
-        FIRVisionFaceLandmark *eyeRight =
-        [face landmarkOfType:FIRFaceLandmarkTypeRightEye];
+        MLKFaceLandmark *eyeRight =
+        [face landmarkOfType:MLKFaceLandmarkTypeRightEye];
         if (eyeRight != nil) {
             [resultDict setObject:[self processPoint:eyeRight.position]
                            forKey:@"rightEyePosition"];
         }
         /** Left cheek. */
-        FIRVisionFaceLandmark *cheekLeft =
-        [face landmarkOfType:FIRFaceLandmarkTypeLeftCheek];
+        MLKFaceLandmark *cheekLeft =
+        [face landmarkOfType:MLKFaceLandmarkTypeLeftCheek];
         if (cheekLeft != nil) {
             [resultDict setObject:[self processPoint:cheekLeft.position]
                            forKey:@"leftCheekPosition"];
         }
         /** Right cheek. */
-        FIRVisionFaceLandmark *cheekRight =
-        [face landmarkOfType:FIRFaceLandmarkTypeRightCheek];
+        MLKFaceLandmark *cheekRight =
+        [face landmarkOfType:MLKFaceLandmarkTypeRightCheek];
         if (cheekRight != nil) {
             [resultDict setObject:[self processPoint:cheekRight.position]
                            forKey:@"rightCheekPosition"];
         }
         /** Midpoint between the nostrils where the nose meets the face. */
-        FIRVisionFaceLandmark *noseBase =
-        [face landmarkOfType:FIRFaceLandmarkTypeNoseBase];
+        MLKFaceLandmark *noseBase =
+        [face landmarkOfType:MLKFaceLandmarkTypeNoseBase];
         if (noseBase != nil) {
             [resultDict setObject:[self processPoint:noseBase.position]
                            forKey:@"noseBasePosition"];
         }
-        
+
         // If classification was enabled:
         if (face.hasSmilingProbability) {
             CGFloat smileProb = face.smilingProbability;
@@ -243,7 +242,7 @@
     return result;
 }
 
-- (NSDictionary *)processBounds:(CGRect)bounds 
+- (NSDictionary *)processBounds:(CGRect)bounds
 {
     float width = bounds.size.width * _scaleX;
     float height = bounds.size.height * _scaleY;
@@ -256,12 +255,12 @@
     return boundsDict;
 }
 
-- (NSDictionary *)processPoint:(FIRVisionPoint *)point 
+- (NSDictionary *)processPoint:(MLKVisionPoint *)point
 {
-    float originX = [point.x floatValue] * _scaleX;
-    float originY = [point.y floatValue] * _scaleY;
+    float originX = point.x * _scaleX;
+    float originY = point.y * _scaleY;
     NSDictionary *pointDict = @{
-                                
+
                                 @"x" : @(originX),
                                 @"y" : @(originY)
                                 };
@@ -295,21 +294,21 @@
     return features;
 }
 
-- (void)setTracking:(id)json:(dispatch_queue_t)sessionQueue 
+- (void)setTracking:(id)json:(dispatch_queue_t)sessionQueue
 {
     return;
 }
-- (void)setLandmarksMode:(id)json:(dispatch_queue_t)sessionQueue 
-{
-    return;
-}
-
-- (void)setPerformanceMode:(id)json:(dispatch_queue_t)sessionQueue 
+- (void)setLandmarksMode:(id)json:(dispatch_queue_t)sessionQueue
 {
     return;
 }
 
-- (void)setClassificationMode:(id)json:(dispatch_queue_t)sessionQueue 
+- (void)setPerformanceMode:(id)json:(dispatch_queue_t)sessionQueue
+{
+    return;
+}
+
+- (void)setClassificationMode:(id)json:(dispatch_queue_t)sessionQueue
 {
     return;
 }
