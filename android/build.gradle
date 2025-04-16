@@ -4,6 +4,17 @@ def safeExtGet(prop, fallback) {
   rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath("com.android.tools.build:gradle:7.3.1")
+  }
+}
+
 android {
   def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
   if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
@@ -19,10 +30,6 @@ android {
     multiDexEnabled true
   }
 
-  lintOptions{
-    abortOnError false
-  }
-
   flavorDimensions "react-native-camera"
 
   productFlavors {
@@ -34,6 +41,10 @@ android {
       dimension "react-native-camera"
       namespace "org.reactnative.camera"
     }
+  }
+
+  lintOptions{
+    abortOnError false
   }
 
   packagingOptions {
@@ -50,7 +61,10 @@ repositories {
   google()
   mavenCentral()
   maven { url "https://jitpack.io" }
-  maven { url "$rootDir/../node_modules/react-native/android" }
+  maven {
+    // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+    url "$rootDir/../node_modules/react-native/android"
+  }
 }
 
 dependencies {
