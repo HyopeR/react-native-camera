@@ -23,7 +23,6 @@ import org.reactnative.camera.utils.ImageDimensions;
 
 import java.util.List;
 
-
 public class TextRecognizerAsyncTask extends android.os.AsyncTask<Void, Void, Void> {
 
   private TextRecognizerAsyncTaskDelegate mDelegate;

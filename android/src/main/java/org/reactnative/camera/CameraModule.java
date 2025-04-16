@@ -5,11 +5,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.facebook.react.bridge.*;
-import com.facebook.react.common.build.ReactBuildConfig;
 import com.facebook.react.uimanager.NativeViewHierarchyManager;
 import com.facebook.react.uimanager.UIBlock;
 import com.facebook.react.uimanager.UIManagerModule;
@@ -30,7 +27,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.SortedSet;
-
 
 public class CameraModule extends ReactContextBaseJavaModule {
   private static final String TAG = "CameraModule";

@@ -1,7 +1,6 @@
 package org.reactnative.camera.tasks;
 
 import android.graphics.Rect;
-import android.util.SparseArray;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -23,7 +22,6 @@ import org.reactnative.frame.RNFrame;
 import org.reactnative.frame.RNFrameFactory;
 
 import java.util.List;
-
 
 public class TextRecognizerAsyncTask extends android.os.AsyncTask<Void, Void, List<TextBlock>> {
 

@@ -18,8 +18,6 @@ package com.google.android.cameraview;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
-import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.os.Build;
 import android.os.HandlerThread;
@@ -33,7 +31,6 @@ import androidx.core.os.ParcelableCompat;
 import androidx.core.os.ParcelableCompatCreatorCallbacks;
 import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.graphics.SurfaceTexture;
@@ -322,7 +319,6 @@ public class CameraView extends FrameLayout {
 
     /**
      * Open a camera device and start showing camera preview. This is typically called from
-     * {@link Activity#onResume()}.
      */
     public void start() {
         mImpl.start();
@@ -343,7 +339,6 @@ public class CameraView extends FrameLayout {
 
     /**
      * Stop camera preview and close the device. This is typically called from
-     * {@link Activity#onPause()}.
      */
     public void stop() {
         mImpl.stop();
@@ -620,7 +615,6 @@ public class CameraView extends FrameLayout {
 
     /**
      * Take a picture. The result will be returned to
-     * {@link Callback#onPictureTaken(CameraView, byte[], int)}.
      */
     public void takePicture(ReadableMap options) {
         mImpl.takePicture(options);
@@ -878,7 +872,6 @@ public class CameraView extends FrameLayout {
          * Called when a video recording ends, but before video is saved/processed.
          *
          * @param cameraView The associated {@link CameraView}.
-         * @param path       Path to recoredd video file.
          */
         public void onRecordingEnd(CameraView cameraView){}
 

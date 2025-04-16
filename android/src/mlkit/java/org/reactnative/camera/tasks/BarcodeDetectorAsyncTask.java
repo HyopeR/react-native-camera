@@ -1,6 +1,5 @@
 package org.reactnative.camera.tasks;
 
-//import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
 

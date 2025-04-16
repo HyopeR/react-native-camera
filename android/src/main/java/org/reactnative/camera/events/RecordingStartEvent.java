@@ -3,7 +3,6 @@ package org.reactnative.camera.events;
 import androidx.core.util.Pools;
 
 import org.reactnative.camera.CameraViewManager;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
