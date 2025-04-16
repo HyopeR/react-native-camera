@@ -15,8 +15,7 @@ import javax.annotation.Nullable;
 
 public class FaceDetectorModule extends ReactContextBaseJavaModule {
   private static final String TAG = "RNFaceDetector";
-//  private ScopedContext mScopedContext;
-private static ReactApplicationContext mScopedContext;
+  private static ReactApplicationContext mScopedContext;
 
   public FaceDetectorModule(ReactApplicationContext reactContext) {
     super(reactContext);

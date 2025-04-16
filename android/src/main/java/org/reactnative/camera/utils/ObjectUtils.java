@@ -1,6 +1,5 @@
 package org.reactnative.camera.utils;
 
-
 public class ObjectUtils {
 
     /*

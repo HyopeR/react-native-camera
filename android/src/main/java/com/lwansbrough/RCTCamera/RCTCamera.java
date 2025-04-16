@@ -4,7 +4,6 @@
 
 package com.lwansbrough.RCTCamera;
 
-import android.graphics.drawable.GradientDrawable;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.util.Log;

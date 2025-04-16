@@ -1,16 +1,10 @@
 package org.reactnative.camera.utils;
 
-import android.content.Context;
 import android.net.Uri;
-
 
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
-
-/**
- * Created by jgfidelis on 23/01/18.
- */
 
 public class RNFileUtils {
 

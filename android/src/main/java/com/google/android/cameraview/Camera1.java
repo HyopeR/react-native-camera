@@ -43,7 +43,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.reactnative.camera.utils.ObjectUtils;
 
-
 @SuppressWarnings("deprecation")
 class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
                                                 MediaRecorder.OnErrorListener, Camera.PreviewCallback {

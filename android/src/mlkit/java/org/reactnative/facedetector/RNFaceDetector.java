@@ -7,7 +7,6 @@ import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
-
 public class RNFaceDetector {
   public static int ALL_CLASSIFICATIONS = FaceDetectorOptions.CLASSIFICATION_MODE_ALL;
   public static int NO_CLASSIFICATIONS = FaceDetectorOptions.CLASSIFICATION_MODE_NONE;

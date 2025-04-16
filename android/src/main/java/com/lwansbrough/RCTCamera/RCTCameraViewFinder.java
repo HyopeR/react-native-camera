@@ -7,7 +7,6 @@ package com.lwansbrough.RCTCamera;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.view.MotionEvent;

@@ -4,10 +4,6 @@ import android.content.Context;
 
 import java.io.File;
 
-/**
- * Created by jgfidelis on 23/01/18.
- */
-
 public class ScopedContext {
 
     private File cacheDirectory = null;

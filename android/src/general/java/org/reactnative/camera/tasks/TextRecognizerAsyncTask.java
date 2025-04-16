@@ -1,7 +1,6 @@
 package org.reactnative.camera.tasks;
 
 import android.graphics.Rect;
-import android.util.SparseArray;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -14,7 +13,7 @@ import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.Text.Line;
 import com.google.mlkit.vision.text.Text.TextBlock;
 import com.google.mlkit.vision.text.TextRecognizer;
-import com.google.mlkit.vision.text.TextRecognizerOptions;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 import com.google.mlkit.vision.text.TextRecognition;
 
 import org.reactnative.camera.utils.ImageDimensions;
@@ -23,7 +22,6 @@ import org.reactnative.frame.RNFrame;
 import org.reactnative.frame.RNFrameFactory;
 
 import java.util.List;
-
 
 public class TextRecognizerAsyncTask extends android.os.AsyncTask<Void, Void, List<TextBlock>> {
 

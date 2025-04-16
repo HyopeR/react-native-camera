@@ -17,12 +17,11 @@ import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.TextRecognition;
-import com.google.mlkit.vision.text.TextRecognizerOptions;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
 import org.reactnative.camera.utils.ImageDimensions;
 
 import java.util.List;
-
 
 public class TextRecognizerAsyncTask extends android.os.AsyncTask<Void, Void, Void> {
 

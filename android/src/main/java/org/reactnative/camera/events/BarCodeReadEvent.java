@@ -81,7 +81,7 @@ public class BarCodeReadEvent extends Event<BarCodeReadEvent> {
       }
       event.putString("rawData", formatter.toString());
       formatter.close();
-    } 
+    }
 
     event.putString("type", mBarCode.getBarcodeFormat().toString());
     WritableArray resultPoints = Arguments.createArray();
