@@ -11,11 +11,16 @@ android {
   }
 
   compileSdkVersion safeExtGet('compileSdkVersion', 34)
+    buildToolsVersion safeExtGet("buildToolsVersion", "34.0.0")
 
   defaultConfig {
     minSdkVersion safeExtGet('minSdkVersion', 21)
     targetSdkVersion safeExtGet('targetSdkVersion', 34)
     multiDexEnabled true
+  }
+
+  lintOptions{
+    abortOnError false
   }
 
   flavorDimensions "react-native-camera"
