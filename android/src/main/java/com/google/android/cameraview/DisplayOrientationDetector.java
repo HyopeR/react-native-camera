@@ -22,6 +22,7 @@ import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 
+
 /**
  * Monitors the value returned from {@link Display#getRotation()}.
  */

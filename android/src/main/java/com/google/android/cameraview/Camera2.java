@@ -61,6 +61,8 @@ import java.util.SortedSet;
 
 import org.reactnative.camera.utils.ObjectUtils;
 
+
+
 @SuppressWarnings("MissingPermission")
 @TargetApi(21)
 class Camera2 extends CameraViewImpl implements MediaRecorder.OnInfoListener, MediaRecorder.OnErrorListener {

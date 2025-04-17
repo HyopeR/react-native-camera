@@ -63,7 +63,7 @@ public class FaceDetectorUtils {
     }
 
     WritableMap origin = Arguments.createMap();
-    Float x = face.getBoundingBox().exactCenterX() - (face.getBoundingBox().width() / 2 ) + cropX;
+    Float x = face.getBoundingBox().exactCenterX() - (face.getBoundingBox().width() / 2) + cropX;
     Float y = face.getBoundingBox().exactCenterY() - (face.getBoundingBox().height() / 2) + cropY;
     if (face.getBoundingBox().exactCenterX() < width / 2) {
       x = x + paddingLeft / 2;

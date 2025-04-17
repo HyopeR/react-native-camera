@@ -8,6 +8,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 
+
 public class RNBarcodeDetector {
 
     public static int NORMAL_MODE = 0;

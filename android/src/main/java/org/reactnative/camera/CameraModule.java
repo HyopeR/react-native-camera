@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.SortedSet;
 
+
 public class CameraModule extends ReactContextBaseJavaModule {
   private static final String TAG = "CameraModule";
 

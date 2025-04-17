@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 
+
 abstract class CameraViewImpl {
 
     protected final Callback mCallback;
@@ -61,7 +62,7 @@ abstract class CameraViewImpl {
     abstract boolean isCameraOpened();
 
     abstract void setFacing(int facing);
-
+  
     abstract int getFacing();
 
     abstract void setCameraId(String id);

@@ -1,19 +1,21 @@
-apply plugin: 'com.android.library'
-
 def safeExtGet(prop, fallback) {
   rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
 buildscript {
-  repositories {
-    google()
-    mavenCentral()
-  }
+  if (project == rootProject) {
+    repositories {
+      google()
+      mavenCentral()
+    }
 
-  dependencies {
-    classpath("com.android.tools.build:gradle:7.3.1")
+    dependencies {
+      classpath("com.android.tools.build:gradle:6.7.1")
+    }
   }
 }
+
+apply plugin: 'com.android.library'
 
 android {
   def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
@@ -22,12 +24,12 @@ android {
   }
 
   compileSdkVersion safeExtGet('compileSdkVersion', 34)
-  buildToolsVersion safeExtGet("buildToolsVersion", "34.0.0")
+  buildToolsVersion safeExtGet('buildToolsVersion', '34.0.0')
 
   defaultConfig {
-    minSdkVersion safeExtGet('minSdkVersion', 21)
-    targetSdkVersion safeExtGet('targetSdkVersion', 34)
     multiDexEnabled true
+    minSdkVersion safeExtGet('minSdkVersion', 16)
+    targetSdkVersion safeExtGet('targetSdkVersion', 34)
   }
 
   flavorDimensions "react-native-camera"
@@ -35,25 +37,20 @@ android {
   productFlavors {
     general {
       dimension "react-native-camera"
-      namespace "org.reactnative.camera"
     }
     mlkit {
       dimension "react-native-camera"
-      namespace "org.reactnative.camera"
     }
   }
 
-  lintOptions{
+  lintOptions {
     abortOnError false
+    warning 'InvalidPackage'
   }
 
   packagingOptions {
-    resources {
-      excludes += [
-              'META-INF/androidx.exifinterface_exifinterface.version',
-              'META-INF/proguard/androidx-annotations.pro'
-      ]
-    }
+    exclude 'META-INF/androidx.exifinterface_exifinterface.version'
+    exclude 'META-INF/proguard/androidx-annotations.pro'
   }
 }
 

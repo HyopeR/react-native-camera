@@ -10,6 +10,7 @@ import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 import org.reactnative.camera.CameraViewManager;
 
+
 public class TextRecognizedEvent extends Event<TextRecognizedEvent> {
 
   private static final Pools.SynchronizedPool<TextRecognizedEvent> EVENTS_POOL =

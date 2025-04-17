@@ -9,6 +9,7 @@ import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 import org.reactnative.camera.CameraViewManager;
 
+
 public class TouchEvent extends Event<TouchEvent> {
   private static final Pools.SynchronizedPool<TouchEvent> EVENTS_POOL =
       new Pools.SynchronizedPool<>(3);
